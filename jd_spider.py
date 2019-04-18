@@ -8,13 +8,23 @@ from selenium.webdriver.common.action_chains import ActionChains
 import csv
 import re
 
+def handle_shop(item):
+    """处理店铺"""
 
+    try:
+
+        name = item.select(".p-shop  a")[0]["title"]
+    except Exception:
+        name = ""
+    return name
 def handle_name(item):
     """处理商品名字"""
-    shop = item.select(".p-shop  a")[0]["title"]
+    shop = item.select(".p-name  em")[0].get_text()
+    # print(shop)
     try:
-        print(s)
-        name = re.split("\\n", s)[1]
+
+        name = re.split("\\n", shop)[1]
+        print(name)
         name = name.strip()
     except Exception:
         name = shop.strip()
@@ -50,7 +60,7 @@ def get_product(href):
 
     whait.until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "li.gl-item:nth-child(60) > div:nth-child(1) > div:nth-child(1) > a:nth-child(1) > img:nth-child(1)"))
+                (By.CSS_SELECTOR, "li.gl-item:nth-child(60) > div:nth-child(1) > div:nth-child(5) > span:nth-child(1) > a:nth-child(1)"))
         )
     html = browser.page_source
     soup = BeautifulSoup(html,"lxml")
@@ -65,7 +75,7 @@ def get_product(href):
         # print(item.select(".p-shop  a")[0]["title"])
 
         product = {
-            "店铺":item.select(".p-shop  a")[0]["title"],
+            "店铺":handle_shop(item),
             "商品":handle_name(item),
             "价格":handle_price(item),
             "图片":handle_img(item),
